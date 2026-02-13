@@ -276,7 +276,7 @@
 
         <div class="actions">
           <button id="calc" class="primary">計算する</button>
-          <button id="swap" type="button" class="ghost">開始/終了 入替</button>
+          <button id="nowEnd" type="button" class="ghost">終了 現在時刻</button>
         </div>
 
         <div class="result" id="result">
@@ -414,11 +414,12 @@
       renderResult({ startStr, endStr, daySpan, breakMins, rawWork, rounded });
     }
 
-    document.getElementById("calc").addEventListener("click", calc);
-    document.getElementById("swap").addEventListener("click", () => {
-      const s = document.getElementById("start");
+    function pad2(n){ return String(n).padStart(2,"0"); }
+
+    document.getElementById("nowEnd").addEventListener("click", () => {
       const e = document.getElementById("end");
-      [s.value, e.value] = [e.value, s.value];
+      const now = new Date();
+      e.value = `${pad2(now.getHours())}:${pad2(now.getMinutes())}`;
       calc();
     });
 
