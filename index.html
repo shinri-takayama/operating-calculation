@@ -234,6 +234,25 @@
       background: rgba(255,255,255,.55);
     }
 
+    .timeSelect{
+      width:100%;
+      padding: 12px 12px;
+      border-radius: 14px;
+      border: 1px solid rgba(0,0,0,.12);
+      background: rgba(255,255,255,.75);
+      color: var(--text);
+      font-size: 16px;
+      outline:none;
+      transition: box-shadow .15s ease, border-color .15s ease;
+      appearance: none;
+      -webkit-appearance: none;
+    }
+    .timeSelect:focus{
+      border-color: rgba(0,113,227,.55);
+      box-shadow: 0 0 0 4px rgba(0,113,227,.16);
+      background: rgba(255,255,255,.92);
+    }
+
     .mono{ font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", monospace; }
 
     @media (max-width: 520px){
@@ -262,7 +281,7 @@
               <span>開始</span>
               <span class="badge">Start</span>
             </div>
-            <input id="start" type="time" value="09:00" />
+            <select id="start" class="timeSelect"></select>
           </div>
 
           <div class="field">
@@ -270,7 +289,7 @@
               <span>終了</span>
               <span class="badge">End</span>
             </div>
-            <input id="end" type="time" value="18:00" />
+            <select id="end" class="timeSelect"></select>
           </div>
         </div>
 
@@ -307,6 +326,29 @@
       const e = Math.min(a2, b2);
       return Math.max(0, e - s);
     }
+
+    function pad2(n){ return String(n).padStart(2,"0"); }
+
+function fillTimeSelect(id, stepMin = 1) {
+  const el = document.getElementById(id);
+  el.innerHTML = "";
+  for (let t = 0; t < 24*60; t += stepMin) {
+    const h = pad2(Math.floor(t/60));
+    const m = pad2(t%60);
+    const opt = document.createElement("option");
+    opt.value = `${h}:${m}`;
+    opt.textContent = `${h}:${m}`;
+    el.appendChild(opt);
+  }
+}
+
+// ここで初期化（scriptの末尾、calc()を呼ぶ前）
+fillTimeSelect("start", 1); // 1分刻み
+fillTimeSelect("end", 1);
+
+document.getElementById("start").value = "09:00";
+document.getElementById("end").value = "18:00";
+
 
     function buildBreaks(days) {
       const breaksInDay = [
@@ -414,7 +456,7 @@
       renderResult({ startStr, endStr, daySpan, breakMins, rawWork, rounded });
     }
 
-    function pad2(n){ return String(n).padStart(2,"0"); }
+    document.getElementById("calc").addEventListener("click", calc);
 
     document.getElementById("nowEnd").addEventListener("click", () => {
       const e = document.getElementById("end");
